@@ -157,12 +157,12 @@ class SSIDDI(Model):
         )
 
     def _forward_molecules(self, molecules: PackedGraph):
-        molecules.node_feature = self.initial_norm(molecules.node_feature)
+        molecules.atom_feature = self.initial_norm(molecules.atom_feature)
         representation = []
         for block, net_norm in zip(self.blocks, self.net_norms):
             molecules, pooled_hidden_left = block(molecules)
             representation.append(pooled_hidden_left)
-            molecules.node_feature = torch.nn.functional.elu(net_norm(molecules.node_feature))
+            molecules.atom_feature = torch.nn.functional.elu(net_norm(molecules.atom_feature))
         return torch.stack(representation, dim=-2)
 
     def _combine_sides(self, features_left, features_right) -> torch.FloatTensor:
